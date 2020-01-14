@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import heapq
 import math
 import numpy as np
+import time
 
 
 class Node:
@@ -30,7 +31,6 @@ class Node:
     def __hash__(self):
         return hash(self.position)
 
-
 def astar(maze, start, end):
     """Returns a list of tuples as a path from the given start to the given end in the given maze"""
 
@@ -49,10 +49,10 @@ def astar(maze, start, end):
         return (sec_diag_cost - first_diag_cost) * dmin + (first_diag_cost - straight_cost) * dmid + dmax * first_diag_cost 
 
     def delta(position):
-        sum = abs(position[0]) + abs(position[1]) + abs(position[3])
+        sum = abs(position[0]) + abs(position[1]) + abs(position[2])
         if sum == 3:
             return sec_diag_cost
-        else if sum == 2:
+        elif sum == 2:
             return first_diag_cost
         else:
             return straight_cost
@@ -126,15 +126,17 @@ def astar(maze, start, end):
 
             # Make sure within range
             if (
-                node_position[0] > (maze.shape[0] - 1)
+                node_position[0] > (maze.shape[2] - 1)
                 or node_position[0] < 0
                 or node_position[1] > (maze.shape[1] - 1)
                 or node_position[1] < 0
+                or node_position[2] < 0
+                or node_position[2] > (maze.shape[0] - 1)
             ):
                 continue
 
             # Make sure walkable terrain
-            if maze[node_position[0], node_position[1], node_position[2]] != 0:
+            if maze[node_position[2], node_position[1], node_position[0]] != 0:
                 continue
 
             # Create new node
@@ -177,11 +179,11 @@ def main():
                 [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
             ],
             [
                 [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
@@ -189,11 +191,11 @@ def main():
                 [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
             ],
             [
                 [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
@@ -201,38 +203,44 @@ def main():
                 [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
             ],
         ],
         np.int8,
     )
 
     start = (0, 0, 0)
-    end = (0, 8, 3)
+    end = (7, 2, 2)
 
+    t0 = time.process_time()
     path = astar(maze, start, end)
+    t1 = time.process_time()
+    print(t1 - t0)
 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-
-    for z in range(0, maze.shape[0])
+	
+    for z in range(0, maze.shape[0]):
         for y in range(0, maze.shape[1]):
             for x in range(0, maze.shape[2]):
-                if maze[[z], [y], [x]] != 0:
-                    ax.scatter(x , y, z, marker="o", markerfacecolor="blue",)
-
+                if maze[[z],[y],[x]] != 0:
+                    ax.scatter(x , y, z, marker="o", c='blue')
+    
     for point in path:
-        ax.scatter(point[0] , point[1], point[2], marker="o", markerfacecolor="magenta",)
-        
-    ax.scatter(start[0], start[1], start[2], marker="o", markerfacecolor="red",)
-    ax.scatter(end[0], end[1], end[2], marker="o", markerfacecolor="green",)
+        ax.scatter(point[0] , point[1], point[2], marker="o", c="magenta",)
+
+    ax.scatter(start[0], start[1], start[2], marker="o", c='red')
+    ax.scatter(end[0], end[1], end[2], marker="o", c='green')  
+
+    ax.set_xlabel('X Label')
+    ax.set_ylabel('Y Label')
+    ax.set_zlabel('Z Label') 
 
     plt.show()
-
 
 if __name__ == "__main__":
     main()
