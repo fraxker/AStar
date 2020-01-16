@@ -31,13 +31,16 @@ class Node:
     def __hash__(self):
         return hash(self.position)
 
+
 def astar(maze, start, end):
     """Returns a list of tuples as a path from the given start to the given end in the given maze"""
 
-    #Cost for doing different actions, used to calculate G and H scores
-    straight_cost = 1 #Distance of going straight
-    first_diag_cost = 1.4142 #Distance of going diagonal on a square, estimate of sqrt(2)
-    sec_diag_cost = 1.732 #Distance of going diagonal on a cube, estimate of sqrt(3)
+    # Cost for doing different actions, used to calculate G and H scores
+    straight_cost = 1  # Distance of going straight
+    first_diag_cost = (
+        1.4142  # Distance of going diagonal on a square, estimate of sqrt(2)
+    )
+    sec_diag_cost = 1.732  # Distance of going diagonal on a cube, estimate of sqrt(3)
 
     def heuristic(node):
         dx = abs(node.position[0] - end_node.position[0])
@@ -46,7 +49,11 @@ def astar(maze, start, end):
         dmin = min(dx, dy, dz)
         dmax = max(dx, dy, dz)
         dmid = dx + dy + dz - dmin - dmax
-        return (sec_diag_cost - first_diag_cost) * dmin + (first_diag_cost - straight_cost) * dmid + dmax * first_diag_cost 
+        return (
+            (sec_diag_cost - first_diag_cost) * dmin
+            + (first_diag_cost - straight_cost) * dmid
+            + dmax * first_diag_cost
+        )
 
     def delta(position):
         sum = abs(position[0]) + abs(position[1]) + abs(position[2])
@@ -56,7 +63,6 @@ def astar(maze, start, end):
             return first_diag_cost
         else:
             return straight_cost
-
 
     # Create start and end node
     start_node = Node(None, start)
@@ -105,7 +111,7 @@ def astar(maze, start, end):
             (-1, 1, -1),
             (1, -1, -1),
             (1, 1, -1),
-            (0, 0 , -1),
+            (0, 0, -1),
             (0, -1, 1),
             (0, 1, 1),
             (-1, 0, 1),
@@ -114,7 +120,7 @@ def astar(maze, start, end):
             (-1, 1, 1),
             (1, -1, 1),
             (1, 1, 1),
-            (0 , 0, 1),
+            (0, 0, 1),
         ]:  # Adjacent squares
 
             # Get node position
@@ -140,11 +146,7 @@ def astar(maze, start, end):
                 continue
 
             # Create new node
-            new_node = Node(
-                current_node,
-                node_position,
-                delta(new_position),
-            )
+            new_node = Node(current_node, node_position, delta(new_position),)
 
             # Append
             children.append(new_node)
@@ -171,6 +173,7 @@ def astar(maze, start, end):
 
 
 def main():
+    grapht0 = time.process_time()
     maze = np.array(
         [
             [
@@ -213,34 +216,40 @@ def main():
         np.int8,
     )
 
+    grapht1 = time.process_time()
+    print("Graph:", (grapht1 - grapht0))
+
     start = (0, 0, 0)
     end = (7, 2, 2)
 
     t0 = time.process_time()
     path = astar(maze, start, end)
     t1 = time.process_time()
-    print(t1 - t0)
+    print("Astar", (t1 - t0))
 
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-	
+    ax = fig.add_subplot(111, projection="3d")
+
     for z in range(0, maze.shape[0]):
         for y in range(0, maze.shape[1]):
             for x in range(0, maze.shape[2]):
-                if maze[[z],[y],[x]] != 0:
-                    ax.scatter(x , y, z, marker="o", c='blue')
-    
+                if maze[[z], [y], [x]] != 0:
+                    ax.scatter(x, y, z, marker="o", c="blue")
+
     for point in path:
-        ax.scatter(point[0] , point[1], point[2], marker="o", c="magenta",)
+        ax.scatter(
+            point[0], point[1], point[2], marker="o", c="magenta",
+        )
 
-    ax.scatter(start[0], start[1], start[2], marker="o", c='red')
-    ax.scatter(end[0], end[1], end[2], marker="o", c='green')  
+    ax.scatter(start[0], start[1], start[2], marker="o", c="red")
+    ax.scatter(end[0], end[1], end[2], marker="o", c="green")
 
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label') 
+    ax.set_xlabel("X Label")
+    ax.set_ylabel("Y Label")
+    ax.set_zlabel("Z Label")
 
     plt.show()
+
 
 if __name__ == "__main__":
     main()
