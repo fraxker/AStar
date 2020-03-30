@@ -10,7 +10,7 @@ first_diag_cost = (
     1.41421356  # Distance of going diagonal on a square, estimate of sqrt(2)
 )
 sec_diag_cost = 1.7320508  # Distance of going diagonal on a cube, estimate of sqrt(3)
-size = (10, 100, 100)  # (z, y, x)
+size = (3, 10, 10)  # (z, y, x)
 
 def heuristic(node, end_node):
     dx = abs(node[0] - end_node[0])
